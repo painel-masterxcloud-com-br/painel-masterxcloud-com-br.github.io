@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#07090b">
+  <meta name="theme-color" content="#05090b">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Master XCloud">
@@ -13,147 +13,246 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+<div class="ambient ambient-a"></div>
+<div class="ambient ambient-b"></div>
+
 <header class="topbar">
-  <div class="topbar-inner">
-    <div class="wordmark">MASTER XCLOUD</div>
-    <div id="topActions" class="top-actions" hidden>
-      <button id="installAppBtn" class="ghost install-app-btn" hidden>INSTALAR</button>
-      <button id="logoutBtn" class="ghost">SAIR</button>
+  <div class="brand-mini">
+    <img src="logo_master_xcloud.png" alt="">
+    <div>
+      <strong>MASTER XCLOUD</strong>
+      <span>AUTOMAÇÃO XCLOUD</span>
     </div>
   </div>
-  <div class="glow-line"></div>
+
+  <div id="topActions" class="top-actions" hidden>
+    <button id="installAppBtn" class="icon-btn" type="button" hidden aria-label="Instalar aplicativo">↓</button>
+    <button id="logoutBtn" class="logout-btn" type="button">SAIR</button>
+  </div>
 </header>
 
-<div id="loginLoader" class="login-loader" hidden aria-live="polite" aria-busy="true">
-  <div class="loader-box">
-    <div class="brand-spinner" aria-hidden="true"></div>
-    <strong>Entrando...</strong>
-    <span>Conectando ao Master XCloud</span>
-  </div>
-</div>
+<div class="brand-line"></div>
 
-
-<div id="activationOverlay" class="activation-overlay" hidden aria-live="polite">
-  <div class="activation-stage">
-    <div id="activationWorking">
-      <div class="activation-logo-wrap">
-        <div class="activation-ring"></div>
-        <img class="activation-logo" src="logo_master_xcloud.png" alt="Master XCloud">
+<!-- LOGIN -->
+<main class="page-shell">
+  <section id="loginView" class="login-screen">
+    <div class="login-hero">
+      <div class="logo-orbit">
+        <span class="orbit orbit-one"></span>
+        <span class="orbit orbit-two"></span>
+        <img class="login-logo" src="logo_master_xcloud.png" alt="Master XCloud">
       </div>
 
-      <p class="activation-kicker">MASTER XCLOUD</p>
-      <h2>ATIVANDO DISPOSITIVO</h2>
-      <p id="activationMessage" class="activation-message">Preparando ativação...</p>
-
-      <div class="activation-progress">
-        <div class="activation-progress-track">
-          <div class="activation-progress-bar"></div>
-        </div>
-        <div class="activation-meta">
-          <span id="activationDevice">—</span>
-          <span id="activationTimer">0,0 s</span>
-        </div>
-      </div>
-
-      <div class="activation-steps" aria-hidden="true">
-        <span class="step-dot active"></span>
-        <span class="step-line"></span>
-        <span class="step-dot"></span>
-        <span class="step-line"></span>
-        <span class="step-dot"></span>
-      </div>
-    </div>
-
-    <div id="activationSuccess" class="activation-result" hidden>
-      <div class="success-check">✓</div>
-      <p class="activation-kicker">MASTER XCLOUD</p>
-      <h2>ATIVAÇÃO CONCLUÍDA</h2>
-      <p class="activation-message">Dispositivo configurado com sucesso.</p>
-
-      <div class="result-card">
-        <span>Device Key / MAC</span>
-        <strong id="successDevice">—</strong>
-        <small id="successTime">Concluído</small>
-      </div>
-
-      <button id="newActivationBtn" class="primary">NOVA ATIVAÇÃO</button>
-    </div>
-
-    <div id="activationError" class="activation-result" hidden>
-      <div class="error-mark">!</div>
-      <p class="activation-kicker">MASTER XCLOUD</p>
-      <h2>NÃO FOI POSSÍVEL ATIVAR</h2>
-      <p id="activationErrorText" class="activation-message">Ocorreu um erro durante a ativação.</p>
-      <button id="retryActivationBtn" class="primary">TENTAR NOVAMENTE</button>
-    </div>
-  </div>
-</div>
-
-<main class="shell">
-  <section id="loginView" class="login-view">
-    <div class="login-card">
-      <img class="logo large" src="logo_master_xcloud.png" alt="Master XCloud">
+      <p class="eyebrow cyan">AUTOMAÇÃO PARA XCLOUD</p>
       <h1>MASTER XCLOUD</h1>
-      <p class="muted">Acesso ao painel web.</p>
+      <p class="login-copy">Acesse sua central de ativação.</p>
+    </div>
 
-      <label>E-mail</label>
-      <input id="email" type="email" autocomplete="username" placeholder="seu@email.com">
-
-      <label>Senha</label>
-      <div class="password-wrap">
-        <input id="password" type="password" autocomplete="current-password" placeholder="••••••••">
-        <button id="revealPassword" class="reveal" type="button">Mostrar</button>
+    <div class="glass-card login-card">
+      <div class="field">
+        <label for="email">E-mail</label>
+        <div class="input-shell">
+          <span class="input-icon">✉</span>
+          <input id="email" type="email" autocomplete="username" placeholder="seu@email.com">
+        </div>
       </div>
 
-      <button id="loginBtn" class="primary">ENTRAR</button>
-      <p id="loginStatus" class="status">Servidor: verificando...</p>
+      <div class="field">
+        <label for="password">Senha</label>
+        <div class="input-shell">
+          <span class="input-icon">●</span>
+          <input id="password" type="password" autocomplete="current-password" placeholder="••••••••">
+          <button id="revealPassword" class="reveal-btn" type="button">Mostrar</button>
+        </div>
+      </div>
+
+      <button id="loginBtn" class="primary-btn login-btn" type="button">
+        <span>ENTRAR</span>
+        <span class="arrow">→</span>
+      </button>
+
+      <div class="server-state">
+        <span id="serverDot" class="state-dot"></span>
+        <span id="loginStatus">Verificando servidor...</span>
+      </div>
     </div>
   </section>
 
-  <section id="appView" class="app-view" hidden>
-    <div class="brand-card card">
-      <img class="logo mini" src="logo_master_xcloud.png" alt="">
-      <div>
-        <h2>MASTER XCLOUD</h2>
-        <p id="connectionStatus" class="online">● Conectado</p>
+  <!-- DASHBOARD -->
+  <section id="appView" class="dashboard" hidden>
+    <section class="welcome-card glass-card">
+      <div class="welcome-brand">
+        <img src="logo_master_xcloud.png" alt="">
+        <div>
+          <p class="eyebrow cyan">MASTER XCLOUD</p>
+          <h2>Central de Ativação</h2>
+          <p><span class="online-dot"></span> Sistema conectado</p>
+        </div>
       </div>
-      <span class="badge">WEB</span>
-    </div>
-
-    <div class="dashboard-grid">
-      <article class="metric card"><span>Operações nesta sessão</span><strong id="opsCount">0</strong></article>
-      <article class="metric card"><span>Backend</span><strong id="apiState">Online</strong></article>
-      <article class="metric card"><span>Sessão</span><strong>Privada</strong></article>
-    </div>
-
-    <section class="panel card">
-      <div class="section-head">
-        <div><p class="eyebrow">PAINEL DE AUTOMAÇÃO</p><h3>Executar operação</h3></div>
-        <span class="safe-pill">Sessão protegida</span>
-      </div>
-
-      <div class="fixed-flow"><strong>Ativar MAC + DNS</strong></div>
-
-      <label>Device Key / MAC</label>
-      <input id="device" type="text" placeholder="DEVICE123" autocapitalize="characters">
-
-      <div>
-        <label>M3U / DNS</label>
-        <textarea id="playlist" rows="3" placeholder="http://servidor.exemplo/get.php?..." spellcheck="false"></textarea>
-      </div>
-
-      <button id="executeBtn" class="primary">ATIVAR MAC + DNS</button>
-      <p class="hint">A sessão permanece ativa para executar várias operações sem fazer login novamente.</p>
+      <span class="web-chip">WEB</span>
     </section>
 
-    <section class="panel card">
-      <p class="eyebrow">STATUS DA AUTOMAÇÃO</p>
+    <section class="metrics">
+      <article class="metric-card glass-card">
+        <span class="metric-label">BACKEND</span>
+        <strong id="apiState">ONLINE</strong>
+        <small>Render conectado</small>
+      </article>
+
+      <article class="metric-card glass-card">
+        <span class="metric-label">SESSÃO</span>
+        <strong>ATIVA</strong>
+        <small>Login protegido</small>
+      </article>
+
+      <article class="metric-card glass-card metric-wide">
+        <span class="metric-label">ATIVAÇÕES NESTA SESSÃO</span>
+        <strong id="opsCount">0</strong>
+        <small>Dispositivos processados</small>
+      </article>
+    </section>
+
+    <section class="activation-card glass-card">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow cyan">NOVA ATIVAÇÃO</p>
+          <h3>Ativar dispositivo</h3>
+          <p>Informe o Device Key e a lista M3U/DNS.</p>
+        </div>
+        <div class="bolt">⚡</div>
+      </div>
+
+      <div class="field">
+        <label for="device">Device Key / MAC</label>
+        <div class="input-shell strong-input">
+          <span class="input-icon cyan-text">◆</span>
+          <input id="device" type="text" placeholder="Ex.: 43A5KZ" autocapitalize="characters">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="playlist">M3U / DNS</label>
+        <textarea id="playlist" rows="4" placeholder="http://servidor.com/get.php?..." spellcheck="false"></textarea>
+      </div>
+
+      <button id="executeBtn" class="primary-btn activation-btn" type="button">
+        <span>ATIVAR DISPOSITIVO</span>
+        <span class="button-pulse"></span>
+      </button>
+
+      <p class="privacy-note">● Sessão privada • Credenciais não são armazenadas no GitHub Pages</p>
+    </section>
+
+    <section class="status-card glass-card">
+      <div class="card-head compact">
+        <div>
+          <p class="eyebrow">STATUS</p>
+          <h3>Última operação</h3>
+        </div>
+      </div>
+
       <div id="timeline" class="timeline">
-        <div class="timeline-row neutral"><span class="dot"></span><div><strong>PRONTO</strong><p>Aguardando operação.</p></div></div>
+        <div class="timeline-item ready">
+          <span class="timeline-dot"></span>
+          <div>
+            <strong>PRONTO</strong>
+            <p>Aguardando nova ativação.</p>
+          </div>
+        </div>
       </div>
     </section>
   </section>
 </main>
+
+<!-- LOGIN LOADER -->
+<div id="loginLoader" class="modal-layer" hidden>
+  <div class="login-loader-box">
+    <div class="mx-loader">
+      <img src="logo_master_xcloud.png" alt="">
+      <span></span>
+    </div>
+    <h2>Conectando...</h2>
+    <p>Abrindo uma sessão segura no XCloud</p>
+  </div>
+</div>
+
+<!-- ACTIVATION EXPERIENCE -->
+<div id="activationOverlay" class="activation-overlay" hidden>
+  <div class="activation-canvas">
+
+    <section id="activationWorking" class="activation-working">
+      <div class="activation-emblem">
+        <div class="pulse-aura"></div>
+        <div class="progress-ring"></div>
+        <img src="logo_master_xcloud.png" alt="Master XCloud">
+      </div>
+
+      <p class="eyebrow cyan">MASTER XCLOUD</p>
+      <h2>ATIVANDO DISPOSITIVO</h2>
+      <p id="activationMessage" class="activation-message">Preparando automação...</p>
+
+      <div class="device-chip">
+        <span>DEVICE</span>
+        <strong id="activationDevice">—</strong>
+      </div>
+
+      <div class="process-list">
+        <div class="process-step active" data-step="0">
+          <span class="process-icon">01</span>
+          <div><strong>Conectando</strong><small>Preparando sessão XCloud</small></div>
+          <span class="step-status">●</span>
+        </div>
+        <div class="process-step" data-step="1">
+          <span class="process-icon">02</span>
+          <div><strong>Registrando</strong><small>Cadastrando dispositivo</small></div>
+          <span class="step-status">●</span>
+        </div>
+        <div class="process-step" data-step="2">
+          <span class="process-icon">03</span>
+          <div><strong>Configurando</strong><small>Adicionando M3U / DNS</small></div>
+          <span class="step-status">●</span>
+        </div>
+        <div class="process-step" data-step="3">
+          <span class="process-icon">04</span>
+          <div><strong>Finalizando</strong><small>Confirmando ativação</small></div>
+          <span class="step-status">●</span>
+        </div>
+      </div>
+
+      <div class="activation-footer">
+        <span>Tempo da operação</span>
+        <strong id="activationTimer">0,0 s</strong>
+      </div>
+    </section>
+
+    <section id="activationSuccess" class="activation-result" hidden>
+      <div class="success-icon">
+        <span>✓</span>
+      </div>
+      <p class="eyebrow success-text">MASTER XCLOUD</p>
+      <h2>ATIVAÇÃO CONCLUÍDA</h2>
+      <p>Dispositivo configurado com sucesso.</p>
+
+      <div class="success-device-card">
+        <span>DEVICE KEY</span>
+        <strong id="successDevice">—</strong>
+        <small id="successTime">Concluído</small>
+      </div>
+
+      <button id="newActivationBtn" class="primary-btn" type="button">NOVA ATIVAÇÃO</button>
+    </section>
+
+    <section id="activationError" class="activation-result" hidden>
+      <div class="error-icon">!</div>
+      <p class="eyebrow error-text">MASTER XCLOUD</p>
+      <h2>ATIVAÇÃO NÃO CONCLUÍDA</h2>
+      <p id="activationErrorText">Não foi possível concluir a operação.</p>
+      <button id="retryActivationBtn" class="secondary-btn" type="button">VOLTAR E TENTAR NOVAMENTE</button>
+    </section>
+
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
