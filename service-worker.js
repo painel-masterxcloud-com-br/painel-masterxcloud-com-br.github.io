@@ -1,14 +1,14 @@
-const CACHE_NAME = 'master-xcloud-auto-v2';
+const CACHE_NAME = 'master-xcloud-shop-v1';
 
 const APP_SHELL = [
-  './',
-  './index.html',
-  './styles.css',
-  './app.js',
-  './logo_master_xcloud.png',
-  './icon-192.png',
-  './icon-512.png',
-  './manifest.webmanifest'
+  '/',
+  '/index.html',
+  '/styles.css',
+  '/app.js',
+  '/logo_master_xcloud.png',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/manifest.webmanifest'
 ];
 
 self.addEventListener('install', event => {
@@ -30,6 +30,12 @@ self.addEventListener('activate', event => {
   );
 });
 
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('fetch', event => {
   const request = event.request;
 
@@ -37,9 +43,13 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
 
+  // Do not intercept backend/API calls.
   if (url.hostname.includes('onrender.com')) return;
+
+  // Do not cache third-party resources.
   if (url.origin !== self.location.origin) return;
 
+  // Network-first: always try to get the freshest frontend.
   event.respondWith(
     fetch(new Request(request, { cache: 'no-store' }))
       .then(response => {
@@ -54,7 +64,7 @@ self.addEventListener('fetch', event => {
         if (cached) return cached;
 
         if (request.mode === 'navigate') {
-          const fallback = await caches.match('./index.html');
+          const fallback = await caches.match('/index.html');
           if (fallback) return fallback;
         }
 

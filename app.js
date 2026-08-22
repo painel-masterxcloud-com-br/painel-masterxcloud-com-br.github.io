@@ -349,3 +349,47 @@ if($('installAppBtn')){
     setLogged(false);
   }
 })();
+
+
+/* Master XCloud PWA — masterxcloud.shop */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('/service-worker.js', {
+        scope: '/',
+        updateViaCache: 'none'
+      });
+
+      // Check for frontend updates on every app launch.
+      await registration.update();
+
+      // If a new worker is already waiting, activate it immediately.
+      if (registration.waiting) {
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+
+      registration.addEventListener('updatefound', () => {
+        const worker = registration.installing;
+        if (!worker) return;
+
+        worker.addEventListener('statechange', () => {
+          if (
+            worker.state === 'installed' &&
+            navigator.serviceWorker.controller
+          ) {
+            worker.postMessage({ type: 'SKIP_WAITING' });
+          }
+        });
+      });
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+    } catch (error) {
+      console.warn('PWA: falha ao registrar service worker', error);
+    }
+  });
+}
