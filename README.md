@@ -1,26 +1,42 @@
-# Master XCloud Web — versão GitHub Pages
+# Master XCloud Web
 
-Primeira versão web estática baseada no visual e nos fluxos do Master XCloud v1.8.0.
+Interface web/PWA do Master XCloud, hospedada no GitHub Pages e conectada ao backend da aplicação.
 
 ## O que funciona
 - Interface responsiva para celular e desktop.
-- Tela de acesso demonstrativa.
-- Fluxos visuais de Ativar MAC + DNS, Reset + DNS e Excluir MAC.
-- Status e simulação de execução no navegador.
-- Pode ser hospedado gratuitamente no GitHub Pages.
+- Login por e-mail e senha através do backend.
+- Validação e manutenção de sessão.
+- Ativação de dispositivo com Device Key / MAC e M3U / DNS.
+- Status visual da operação e contagem de ativações da sessão.
+- Instalação como PWA em navegadores compatíveis.
+- Hospedagem do frontend via GitHub Pages.
 
-## Importante
-Esta versão é somente frontend. Ela **não envia login, senha, MAC ou M3U para o painel XCloud** e não salva a senha. Isso é intencional: colocar credenciais ou automação real dentro de JavaScript público no GitHub Pages seria inseguro.
+## Arquitetura
+O GitHub Pages hospeda apenas o frontend estático. As credenciais e operações são enviadas por HTTPS para o backend configurado no `app.js`:
 
-A próxima etapa, quando houver backend gratuito/servidor disponível, é conectar esta interface a uma API própria.
+`https://master-xcloud-web.onrender.com`
 
-## Publicar no GitHub Pages
-1. Crie um repositório novo no GitHub (ex.: `master-xcloud-web`).
-2. Envie os arquivos desta pasta para a raiz do repositório.
-3. No repositório, abra **Settings → Pages**.
-4. Em **Build and deployment**, escolha **Deploy from a branch**.
-5. Escolha a branch `main` e a pasta `/ (root)`.
-6. Salve. O GitHub mostrará o endereço público depois da publicação.
+Endpoints utilizados atualmente:
+- `GET /health`
+- `POST /auth/login`
+- `GET /auth/session`
+- `POST /auth/logout`
+- `POST /operations/activate`
+
+O token de sessão é mantido em `sessionStorage`, portanto não fica persistido após o encerramento da sessão do navegador.
+
+## PWA
+O projeto possui:
+- `manifest.webmanifest`
+- `service-worker.js`
+- ícones 192x192 e 512x512
+
+O service worker usa estratégia network-first para os arquivos do frontend e não intercepta chamadas para o backend no Render.
+
+## Publicação
+O repositório usa a branch `main` e pode ser publicado pelo GitHub Pages a partir da raiz `/`.
+
+O domínio personalizado é definido pelo arquivo `CNAME`.
 
 ## Teste local
-Abra `index.html` diretamente no navegador. Não é necessário instalar dependências.
+O frontend pode ser aberto diretamente pelo `index.html`, mas chamadas à API dependem de conectividade com o backend e das regras de CORS configuradas no servidor.
