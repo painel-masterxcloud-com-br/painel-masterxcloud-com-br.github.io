@@ -1,4 +1,4 @@
-const CACHE_NAME = 'master-xcloud-shop-v2';
+const CACHE_NAME = 'master-xcloud-shop-v3';
 
 const APP_SHELL = [
   '/',
