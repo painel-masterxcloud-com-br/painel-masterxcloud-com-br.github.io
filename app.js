@@ -16,6 +16,16 @@ function setDisplay(el, show, mode='block'){
   el.style.display = show ? mode : 'none';
 }
 
+function clearSession({resetOperations=false}={}){
+  token='';
+  sessionStorage.removeItem('xcloud_token');
+
+  if(resetOperations){
+    operations=0;
+    sessionStorage.removeItem('xcloud_operations');
+  }
+}
+
 function setLogged(logged){
   setDisplay($('loginView'), !logged, 'grid');
   setDisplay($('appView'), logged, 'grid');
@@ -39,6 +49,12 @@ function setServerState(text, state='online'){
     'var(--cyan)';
 }
 
+function makeRequestError(message,status=0){
+  const error=new Error(message);
+  error.status=status;
+  return error;
+}
+
 async function request(path, opts={}){
   const headers = {'Content-Type':'application/json', ...(opts.headers||{})};
   if(token) headers.Authorization = `Bearer ${token}`;
@@ -47,7 +63,7 @@ async function request(path, opts={}){
   try{
     response = await fetch(API_URL + path, {...opts, headers});
   }catch{
-    throw new Error('Não foi possível conectar ao servidor. Aguarde alguns segundos e tente novamente.');
+    throw makeRequestError('Não foi possível conectar ao servidor. Aguarde alguns segundos e tente novamente.');
   }
 
   let data={};
@@ -55,14 +71,20 @@ async function request(path, opts={}){
 
   if(!response.ok){
     if(response.status === 401){
-      throw new Error(data.detail || 'Sessão expirada. Entre novamente.');
+      throw makeRequestError(data.detail || 'Sessão expirada. Entre novamente.',401);
     }
-    throw new Error(data.detail || `Erro HTTP ${response.status}`);
+    throw makeRequestError(data.detail || `Erro HTTP ${response.status}`,response.status);
   }
   return data;
 }
 
 async function checkHealth(){
+  if(!navigator.onLine){
+    setServerState('Sem conexão com a internet.','error');
+    if($('apiState')) $('apiState').textContent='OFFLINE';
+    return;
+  }
+
   setServerState('Verificando servidor...','loading');
   try{
     const data = await request('/health');
@@ -82,8 +104,7 @@ async function validateSession(){
     await request('/auth/session');
     return true;
   }catch{
-    token='';
-    sessionStorage.removeItem('xcloud_token');
+    clearSession();
     return false;
   }
 }
@@ -92,10 +113,22 @@ function startKeepAlive(){
   stopKeepAlive();
   keepAliveTimer=setInterval(async()=>{
     if(!token) return;
+
+    if(!navigator.onLine){
+      if($('apiState')) $('apiState').textContent='OFFLINE';
+      return;
+    }
+
     try{
       await request('/auth/session');
       if($('apiState')) $('apiState').textContent='ONLINE';
-    }catch{
+    }catch(err){
+      if(err.status===401){
+        clearSession();
+        setLogged(false);
+        setServerState('Sessão expirada. Entre novamente.','error');
+        return;
+      }
       if($('apiState')) $('apiState').textContent='RECONECTAR';
     }
   },10*60*1000);
@@ -113,11 +146,23 @@ $('revealPassword').addEventListener('click',()=>{
 });
 
 $('loginBtn').addEventListener('click',async()=>{
-  const email=$('email').value.trim();
+  const emailField=$('email');
+  const email=emailField.value.trim();
   const password=$('password').value;
 
   if(!email || !password){
     setServerState('Preencha e-mail e senha.','error');
+    return;
+  }
+
+  if(!emailField.validity.valid){
+    setServerState('Informe um e-mail válido.','error');
+    emailField.focus();
+    return;
+  }
+
+  if(!navigator.onLine){
+    setServerState('Sem conexão com a internet.','error');
     return;
   }
 
@@ -130,6 +175,10 @@ $('loginBtn').addEventListener('click',async()=>{
       method:'POST',
       body:JSON.stringify({email,password})
     });
+
+    if(!data.token){
+      throw makeRequestError('O servidor não retornou uma sessão válida. Tente novamente.');
+    }
 
     token=data.token;
     sessionStorage.setItem('xcloud_token',token);
@@ -145,10 +194,7 @@ $('loginBtn').addEventListener('click',async()=>{
 
 $('logoutBtn').addEventListener('click',async()=>{
   try{ await request('/auth/logout',{method:'POST'}); }catch{}
-  token='';
-  operations=0;
-  sessionStorage.removeItem('xcloud_token');
-  sessionStorage.removeItem('xcloud_operations');
+  clearSession({resetOperations:true});
   setLogged(false);
   setServerState('Sessão encerrada.','online');
 });
@@ -284,6 +330,10 @@ $('executeBtn').addEventListener('click',async()=>{
     alert('Informe a M3U / DNS.');
     return;
   }
+  if(!navigator.onLine){
+    alert('Sem conexão com a internet. Verifique sua conexão e tente novamente.');
+    return;
+  }
 
   const btn=$('executeBtn');
   btn.disabled=true;
@@ -305,17 +355,29 @@ $('executeBtn').addEventListener('click',async()=>{
     timeline('error','ERRO',err.message);
     showError(err.message);
 
-    if(/sessão expirada|sessão ausente/i.test(err.message)){
-      token='';
-      sessionStorage.removeItem('xcloud_token');
+    if(err.status===401){
+      clearSession();
       setTimeout(()=>{
         closeActivation();
         setLogged(false);
+        setServerState('Sessão expirada. Entre novamente.','error');
       },1800);
     }
   }finally{
     btn.disabled=false;
   }
+});
+
+window.addEventListener('offline',()=>{
+  if($('apiState')) $('apiState').textContent='OFFLINE';
+  if(!$('loginView').hidden){
+    setServerState('Sem conexão com a internet.','error');
+  }
+});
+
+window.addEventListener('online',()=>{
+  if($('apiState')) $('apiState').textContent='RECONECTANDO';
+  checkHealth();
 });
 
 /* PWA install prompt */
