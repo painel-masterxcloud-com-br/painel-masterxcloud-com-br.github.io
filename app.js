@@ -154,11 +154,21 @@ $('logoutBtn').addEventListener('click',async()=>{
 });
 
 function timeline(type,title,text){
-  $('timeline').innerHTML = `
-    <div class="timeline-item ${type}">
-      <span class="timeline-dot"></span>
-      <div><strong>${title}</strong><p>${text}</p></div>
-    </div>`;
+  const item=document.createElement('div');
+  item.className=`timeline-item ${type}`;
+
+  const dot=document.createElement('span');
+  dot.className='timeline-dot';
+
+  const content=document.createElement('div');
+  const strong=document.createElement('strong');
+  const paragraph=document.createElement('p');
+  strong.textContent=title;
+  paragraph.textContent=text;
+  content.append(strong,paragraph);
+  item.append(dot,content);
+
+  $('timeline').replaceChildren(item);
 }
 
 function resetProcessSteps(){
@@ -203,10 +213,9 @@ function openActivation(device){
     $('activationTimer').textContent=`${elapsed.toFixed(1).replace('.',',')} s`;
   },100);
 
-  const schedule=[3300,6800,10300];
   let idx=0;
   activationStepTimer=setInterval(()=>{
-    if(idx<schedule.length){
+    if(idx<3){
       moveStep(idx+1);
       idx++;
     }else{
@@ -309,13 +318,7 @@ $('executeBtn').addEventListener('click',async()=>{
   }
 });
 
-/* PWA */
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
-  });
-}
-
+/* PWA install prompt */
 window.addEventListener('beforeinstallprompt',event=>{
   event.preventDefault();
   deferredInstallPrompt=event;
@@ -349,7 +352,6 @@ if($('installAppBtn')){
     setLogged(false);
   }
 })();
-
 
 /* Master XCloud PWA — masterxcloud.shop */
 if ('serviceWorker' in navigator) {
