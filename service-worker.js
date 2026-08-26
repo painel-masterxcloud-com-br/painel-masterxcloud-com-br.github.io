@@ -1,4 +1,4 @@
-const CACHE_NAME = 'master-xcloud-shop-v3';
+const CACHE_NAME = 'master-xcloud-shop-v4';
 
 const APP_SHELL = [
   '/',
@@ -44,7 +44,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
 
   // Do not intercept backend/API calls.
-  if (url.hostname.includes('onrender.com')) return;
+  if (url.hostname === 'api.masterxcloud.shop') return;
 
   // Do not cache third-party resources.
   if (url.origin !== self.location.origin) return;
