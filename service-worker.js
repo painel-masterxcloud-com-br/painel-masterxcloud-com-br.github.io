@@ -1,4 +1,4 @@
-const CACHE_NAME = 'master-xcloud-shop-v4';
+const CACHE_NAME = 'master-xcloud-shop-v5';
 
 const APP_SHELL = [
   '/',
@@ -38,18 +38,12 @@ self.addEventListener('message', event => {
 
 self.addEventListener('fetch', event => {
   const request = event.request;
-
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-
-  // Do not intercept backend/API calls.
   if (url.hostname === 'api.masterxcloud.shop') return;
-
-  // Do not cache third-party resources.
   if (url.origin !== self.location.origin) return;
 
-  // Network-first: always try to get the freshest frontend.
   event.respondWith(
     fetch(new Request(request, { cache: 'no-store' }))
       .then(response => {
@@ -62,16 +56,11 @@ self.addEventListener('fetch', event => {
       .catch(async () => {
         const cached = await caches.match(request);
         if (cached) return cached;
-
         if (request.mode === 'navigate') {
           const fallback = await caches.match('/index.html');
           if (fallback) return fallback;
         }
-
-        return new Response('Offline', {
-          status: 503,
-          statusText: 'Offline'
-        });
+        return new Response('Offline', {status:503,statusText:'Offline'});
       })
   );
 });
